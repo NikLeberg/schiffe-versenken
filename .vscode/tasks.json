@@ -1,0 +1,107 @@
+// Quelle: https://code.visualstudio.com/docs/cpp/config-mingw
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cmake",
+            "type": "shell",
+            "command": "cmake -S . -B .\\build -G \"MinGW Makefiles\"",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true,
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "cmake --build build",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "clear": true,
+                "showReuseMessage": false
+            },
+            "dependsOn": [
+                "cmake"
+            ]
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "rmdir /S /Q build",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+                "reveal": "never",
+                "clear": true,
+                "showReuseMessage": false
+            }
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": ".\\build\\src\\main.exe",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+                "clear": true,
+                "showReuseMessage": false,
+                "focus": true
+            },
+            "dependsOn": [
+                "build"
+            ]
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "ctest --verbose",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}\\build"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+                "clear": true,
+                "showReuseMessage": false
+            },
+            "dependsOn": [
+                "build"
+            ]
+        }
+    ]
+}
