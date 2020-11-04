@@ -46,25 +46,27 @@ int main(int argc, char *argv[]) {
     (void) argc;
     (void) argv;
 
+#if defined(_WIN32) || defined(_WIN64)
+    // Windows versteht standartmässig keine Umlaute im Terminal, ändere dies
     system("chcp 65001 && cls"); // Codepage auf UTF-8 setzen, erlaubt ä ö und ü
+#endif
     
     // Initialisiere das Spielfeld
     printf("Generiere Spielfeld des Computers, bitte warten...\n");
     playgroundInit(COMPUTER);
     printf("Generiere Spielfeld des Spielers, bitte warten...\n");
     playgroundInit(PLAYER);
-    
-    system("cls"); // Bildschirm leeren
+    // Bildschrm leeren und zum Home (0,0) springen
+    printf("\033[2J\033[H");
     printf("Ich bin bereit. Sind sie es? [Enter]\n");
-    system("pause>nul");
-    //(void) getchar(); // warte auf einen beliebigen Tastendruck
+    (void) getchar(); // auf Enter warten
     // Spielfeld ausgeben
     playgroundPrint(GROUND_MAX, SIZE_X, SIZE_Y); // da noch kein aktueller Schuss übergebe Maximalwerte
 
     uint8_t x = 0, y = 0;
     bool lastTargetWasHit = false;
     bool lastTargetWasLast = false;
-    ground_t lastPlayer = COMPUTER;
+    ground_t lastPlayer = COMPUTER; // Spieler beginnt, also war der "letzte" Spieler der Computer
 
     // solange keiner gewonnen hat
     while (!logicFinished(COMPUTER) && !logicFinished(PLAYER)) {
@@ -73,14 +75,13 @@ int main(int argc, char *argv[]) {
         // oder wenn der Spieler im vorherigen Zug etwas getroffen hatte
         if (((lastPlayer == COMPUTER) && !lastTargetWasHit) || ((lastPlayer == PLAYER) && lastTargetWasHit)) { // Spieler am zug
             player(&x, &y, lastTargetWasHit, lastTargetWasLast);
-            //computer(PLAYER, &x, &y, lastTargetWasHit, lastTargetWasLast);
             lastPlayer = PLAYER;
         } else { // ansonsten ist der Computer am zug
-            computer(COMPUTER, &x, &y, lastTargetWasHit, lastTargetWasLast);
+            computer(&x, &y, lastTargetWasHit, lastTargetWasLast);
             lastPlayer = COMPUTER;
         }
-        // Bildschirm leeren
-        system("cls");
+        // Bildschirm leeren und zum Home (0,0) springen
+        printf("\033[2J\033[H");
         // Ausgeben was von wem getroffen wurde (geschossen wurde auf den anderen Spieler, desshalb Negation)
         uint8_t hit = logicComputeHit(!lastPlayer, x, y);
         lastTargetWasHit = hit;
@@ -89,8 +90,7 @@ int main(int argc, char *argv[]) {
         // Spielfeld ausgeben
         playgroundPrint(!lastPlayer, x, y);
         printf("Weiter? [Enter]");
-        system("pause>nul");
-        puts("\n");
+        (void) getchar(); // auf Enter warten
     }
     // Ende
     if (logicFinished(COMPUTER)) {
@@ -99,6 +99,5 @@ int main(int argc, char *argv[]) {
         printf("\nComputer hat gewonnen.\n");
     }
     statisticsPrint();
-    
     return 0;
 }
