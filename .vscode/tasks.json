@@ -7,8 +7,12 @@
         {
             "label": "cmake",
             "type": "shell",
-            "command": "cmake -S . -B .\\build -G \"MinGW Makefiles\"",
-            "args": [],
+            "windows": {
+                "command": "cmake -S . -B .\\build -G \"MinGW Makefiles\""
+            },
+            "linux": {
+                "command": "cmake -S . -B ./build"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -28,7 +32,6 @@
             "label": "build",
             "type": "shell",
             "command": "cmake --build build",
-            "args": [],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -50,8 +53,12 @@
         {
             "label": "clean",
             "type": "shell",
-            "command": "rmdir /S /Q build",
-            "args": [],
+            "windows": {
+                "command": "rmdir /S /Q build"
+            },
+            "linux": {
+                "command": "rm -r ./build"
+            },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -67,10 +74,14 @@
         {
             "label": "run",
             "type": "shell",
-            "command": ".\\build\\src\\main.exe",
-            "args": [],
+            "windows": {
+                "command": "main.exe"
+            },
+            "linux": {
+                "command": "./main"
+            },
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/build/src"
             },
             "problemMatcher": [
                 "$gcc"
@@ -88,9 +99,8 @@
             "label": "test",
             "type": "shell",
             "command": "ctest --verbose",
-            "args": [],
             "options": {
-                "cwd": "${workspaceFolder}\\build"
+                "cwd": "${workspaceFolder}/build"
             },
             "problemMatcher": [
                 "$gcc"
