@@ -19,7 +19,7 @@
  * 
  */
 
-void test_finishedOnlyWhenAllFound() {
+void logic_finishedOnlyWhenAllFound() {
     assert(!logicFinished(PLAYER));
     for (uint8_t x = 0; x < 3; ++x) {
         for (uint8_t y = 0; y < 3; ++y) {
@@ -34,7 +34,7 @@ void test_finishedOnlyWhenAllFound() {
     }
 }
 
-void test_hitsAreCorrectlyReported() {
+void logic_hitsAreCorrectlyReported() {
     // Fehlschuss
     assert(logicComputeHit(PLAYER, 0, 0) == 0);
     for (uint8_t x = 0; x < 3; ++x) { // nur das relevante Feld aufgedeckt
@@ -70,7 +70,7 @@ void test_hitsAreCorrectlyReported() {
  * @brief Etwas wird über Stdout ausgegeben
  * 
  */
-void test_printGeneratesOutput() {
+void logic_printGeneratesOutput() {
     ASSERT_OUTPUT(logicComputeHit(PLAYER, 0, 0));
 }
 
@@ -87,9 +87,9 @@ int main(int argc, char *argv[]) {
     (void)argv;
 
     TEST_STDOUT_MUTE();
-    TEST_RUN(test_finishedOnlyWhenAllFound);
-    TEST_RUN(test_hitsAreCorrectlyReported);
-    TEST_RUN(test_printGeneratesOutput);
+    TEST_RUN(logic_finishedOnlyWhenAllFound);
+    TEST_RUN(logic_hitsAreCorrectlyReported);
+    TEST_RUN(logic_printGeneratesOutput);
     return 0;
 }
 

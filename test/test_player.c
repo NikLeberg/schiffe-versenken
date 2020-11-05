@@ -23,7 +23,7 @@
  * @brief Bei der Koordinatenabfrage soll ein Hinweistext ausgegeben werden
  * 
  */
-void test_generatesOutput() {
+void player_generatesOutput() {
     TEST_STDIN_PREPARE("%s\n", "a1");
     uint8_t x, y;
     ASSERT_OUTPUT(player(&x, &y, false, false));
@@ -33,7 +33,7 @@ void test_generatesOutput() {
  * @brief Korrekte Umwandlung von korrekt einggegebenen Koordinaten
  * 
  */
-void test_acceptGoodEnteredCoordinates() {
+void player_acceptGoodEnteredCoordinates() {
     // Input für scanf vorbereiten
     char maxYUpper = 'A' + (SIZE_Y - 1);
     char maxYLower = 'a' + (SIZE_Y - 1);
@@ -61,7 +61,7 @@ void test_acceptGoodEnteredCoordinates() {
  * @brief Fehleingaben sollten nicht akzeptiert werden
  * 
  */
-void test_discardWronglyEnteredCoordinates() {
+void player_discardWronglyEnteredCoordinates() {
     // Input für scanf vorbereiten
     char firstInvalidY = 'a' + SIZE_Y;
     char firstInvalidX[3] = "00";
@@ -93,9 +93,9 @@ int main(int argc, char *argv[]) {
     (void)argv;
 
     TEST_STDOUT_MUTE();
-    TEST_RUN(test_generatesOutput);
-    TEST_RUN(test_acceptGoodEnteredCoordinates);
-    TEST_RUN(test_discardWronglyEnteredCoordinates);
+    TEST_RUN(player_generatesOutput);
+    TEST_RUN(player_acceptGoodEnteredCoordinates);
+    TEST_RUN(player_discardWronglyEnteredCoordinates);
     return 0;
 }
 

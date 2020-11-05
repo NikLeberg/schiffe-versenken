@@ -23,7 +23,7 @@
  * @brief Die Spielfeldgrösse darf maximal 99 * 26 Felder sein
  * 
  */
-void test_groundSizeIsInBounds() {
+void game_groundSizeIsInBounds() {
     ASSERT_BETWEEN(SIZE_X, 2, 99);
     ASSERT_BETWEEN(SIZE_Y, 2, 26);
 }
@@ -32,7 +32,7 @@ void test_groundSizeIsInBounds() {
  * @brief Schiffe sind minimal 2 und maximal SIZE - 1 Felder gross.
  * 
  */
-void test_shipSizesAreInBounds() {
+void game_shipSizesAreInBounds() {
     int16_t shipConfig[] = {SHIP_CONFIG};
     for (uint8_t ship = 0; ship < (sizeof(shipConfig) / sizeof(int16_t)); ++ship) {
         assert(shipConfig[ship] > 1); // alle Schiffe sind mindestens zwei Felder gross
@@ -44,7 +44,7 @@ void test_shipSizesAreInBounds() {
  * @brief Das Spielfeld muss Platz für alle Schiffsteile haben
  * 
  */
-void test_groundHasSpaceForAllShips() {
+void game_groundHasSpaceForAllShips() {
     int16_t shipConfig[] = {SHIP_CONFIG};
     uint32_t shipParts = 0;
     for (uint8_t ship = 0; ship < (sizeof(shipConfig) / sizeof(int16_t)); ++ship) {
@@ -65,8 +65,8 @@ int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
-    TEST_RUN(test_groundSizeIsInBounds);
-    TEST_RUN(test_shipSizesAreInBounds);
-    TEST_RUN(test_groundHasSpaceForAllShips);
+    TEST_RUN(game_groundSizeIsInBounds);
+    TEST_RUN(game_shipSizesAreInBounds);
+    TEST_RUN(game_groundHasSpaceForAllShips);
     return 0;
 }

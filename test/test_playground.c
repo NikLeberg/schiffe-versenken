@@ -23,7 +23,7 @@
  * @brief Get Set Entity soll das tun was es sollte
  * 
  */
-void test_entityGetSetIsfunctional() {
+void playground_entityGetSetIsfunctional() {
     struct { // XY-Kombinationen für Tests
         uint8_t x, y;
     } xy[] = {{0, 0}, {SIZE_X - 1, 0}, {0, SIZE_Y - 1}, {SIZE_X - 1, SIZE_Y - 1}};
@@ -41,7 +41,7 @@ void test_entityGetSetIsfunctional() {
  * @brief Get Set State soll das tun was es sollte
  * 
  */
-void test_stateGetSetIsFunctional() {
+void playground_stateGetSetIsFunctional() {
     struct { // XY-Kombinationen für Tests
         uint8_t x, y;
     } xy[] = {{0, 0}, {SIZE_X - 1, 0}, {0, SIZE_Y - 1}, {SIZE_X - 1, SIZE_Y - 1}};
@@ -59,7 +59,7 @@ void test_stateGetSetIsFunctional() {
  * @brief Verschiebung von Koordinaten funktioniert wie es soll
  * 
  */
-void test_translateRespectsBounds() {
+void playground_translateRespectsBounds() {
     // obere linke Ecke
     uint8_t x = 0, y = 0;
     assert(playgroundTranslateCoordinate(&x, &y, UP));
@@ -93,7 +93,7 @@ void test_translateRespectsBounds() {
  * @brief Beim Start müssen alle Felder leer sein
  * 
  */
-void test_groundIsClearOnStart() {
+void playground_groundIsClearOnStart() {
     for (uint8_t y = 0; y < SIZE_Y; y++) {
         for (uint8_t x = 0; x < SIZE_X; x++) {
             assert(playgroundGetEntity(PLAYER, x, y) == 0);
@@ -108,7 +108,7 @@ void test_groundIsClearOnStart() {
  * @brief Anzahl der platzierten Schiffsteile == verlangte Anzahl gemäss Konfiguration
  * 
  */
-void test_countOfPlacedShipsEqualToWantedShips() {
+void playground_countOfPlacedShipsEqualToWantedShips() {
     uint8_t shipConfig[] = {SHIP_CONFIG};
     uint32_t shipParts = 0;
     for (uint8_t ship = 0; ship < sizeof(shipConfig); ++ship) {
@@ -135,7 +135,7 @@ void test_countOfPlacedShipsEqualToWantedShips() {
  * @brief Schiffe berühren keine andere Schiffe
  * 
  */
-void test_shipsDontTouch() {
+void playground_shipsDontTouch() {
     uint8_t lastEntity;
     // Entitäten gleicher Art dürfen aneinander sein
     // unterschiedliche müssen von Wasser getrennt sein
@@ -165,7 +165,7 @@ void test_shipsDontTouch() {
  * @brief Zufällige Koordinaten prüfen
  * 
  */
-void test_randomCoordinatesInBounds() {
+void playground_randomCoordinatesInBounds() {
     uint8_t x, y;
     uint32_t tryNum = SIZE_X * SIZE_Y;
     tryNum *= tryNum;
@@ -189,7 +189,7 @@ void test_randomCoordinatesInBounds() {
  * @brief Zufällige Ausrichtung muss immer im Bereich 0 bis 3 liegen.
  * 
  */
-void test_randomDirectionInBounds() {
+void playground_randomDirectionInBounds() {
     direction_t dir;
     uint32_t tryNum = DIRECTION_MAX * DIRECTION_MAX * 2;
     bool got[DIRECTION_MAX] = {0};
@@ -208,7 +208,7 @@ void test_randomDirectionInBounds() {
  * @brief Etwas wird ausgegeben
  * 
  */
-void test_printGeneratesOutput() {
+void playground_printGeneratesOutput() {
     ASSERT_OUTPUT(playgroundPrint(PLAYER, 0, 0));
 }
 
@@ -224,14 +224,14 @@ int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
-    TEST_RUN(test_entityGetSetIsfunctional);
-    TEST_RUN(test_stateGetSetIsFunctional);
-    TEST_RUN(test_translateRespectsBounds);
-    TEST_RUN(test_groundIsClearOnStart);
-    TEST_RUN(test_countOfPlacedShipsEqualToWantedShips);
-    TEST_RUN(test_shipsDontTouch);
-    TEST_RUN(test_randomCoordinatesInBounds); // random erst nach init testen!
-    TEST_RUN(test_randomDirectionInBounds);
-    TEST_RUN(test_printGeneratesOutput);
+    TEST_RUN(playground_entityGetSetIsfunctional);
+    TEST_RUN(playground_stateGetSetIsFunctional);
+    TEST_RUN(playground_translateRespectsBounds);
+    TEST_RUN(playground_groundIsClearOnStart);
+    TEST_RUN(playground_countOfPlacedShipsEqualToWantedShips);
+    TEST_RUN(playground_shipsDontTouch);
+    TEST_RUN(playground_randomCoordinatesInBounds); // random erst nach init testen!
+    TEST_RUN(playground_randomDirectionInBounds);
+    TEST_RUN(playground_printGeneratesOutput);
     return 0;
 }

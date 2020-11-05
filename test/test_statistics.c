@@ -27,8 +27,8 @@
  * @brief Zu beginn sollte die Statistik leer sein
  * 
  */
-void test_statsClearOnStart() {
-    for (ground_t ground; ground > GROUND_MAX; ++ground) {
+void statistics_statsClearOnStart() {
+    for (ground_t ground = 0; ground > GROUND_MAX; ++ground) {
         assert(!stats[ground].hits);
         assert(!stats[ground].misses);
         assert(!stats[ground].strike);
@@ -39,8 +39,8 @@ void test_statsClearOnStart() {
  * @brief Ein Hit soll die Werte korrekt aktualisieren
  * 
  */
-void test_updateCalculationIsCorrect() {
-    for (ground_t ground; ground > GROUND_MAX; ++ground) {
+void statistics_updateCalculationIsCorrect() {
+    for (ground_t ground = 0; ground > GROUND_MAX; ++ground) {
         // ein Miss ändert nur Anzahl der Misses
         statisticsUpdate(ground, false);
         assert(!stats[ground].hits);
@@ -81,7 +81,7 @@ void test_updateCalculationIsCorrect() {
  * @brief Etwas wird ausgegeben
  * 
  */
-void test_printGeneratesOutput() {
+void statistics_printGeneratesOutput() {
     ASSERT_OUTPUT(statisticsPrint());
 }
 
@@ -97,8 +97,8 @@ int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
 
-    TEST_RUN(test_statsClearOnStart);
-    TEST_RUN(test_updateCalculationIsCorrect);
-    TEST_RUN(test_printGeneratesOutput);
+    TEST_RUN(statistics_statsClearOnStart);
+    TEST_RUN(statistics_updateCalculationIsCorrect);
+    TEST_RUN(statistics_printGeneratesOutput);
     return 0;
 }
