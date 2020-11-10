@@ -76,30 +76,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # - name: Create Release
-    #   id: create_release
-    #   uses: actions/create-release@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     tag_name: ${{ github.sha }}
-    #     release_name: CI/CD release of ${{ github.sha }}
-    #     draft: false
-    #     prerelease: true
     
     - name: Download Collected Artifacts from Build
       uses: actions/download-artifact@v2
 
     - name: Display structure of downloaded files
       run: ls -R
+      
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.sha }}
+        release_name: CI/CD release of ${{ github.sha }}
+        draft: false
+        prerelease: true
 
-    # - name: Upload Collected Artifacts
-    #   id: upload-release-asset
-    #   uses: actions/upload-release-asset@v1
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-    #     asset_path: ${{runner.workspace}}/build/src/${{ matrix.config.artifact }}
-    #     asset_name: ${{ matrix.config.os }}-${{ matrix.config.artifact }}
-    #     asset_content_type: application/octet-stream
+    - name: Upload Ubuntu Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./ubuntu-latest-main/main
+        asset_name: schiffeversenken-ubuntu
+        asset_content_type: application/octet-stream
+
+    - name: Upload MacOS Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./macos-latest-main/main
+        asset_name: schiffeversenken-mac
+        asset_content_type: application/octet-stream
+
+    - name: Upload Win64 Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./windows-latest-main.exe/main.exe
+        asset_name: schiffeversenken-win64.exe
+        asset_content_type: application/octet-stream
