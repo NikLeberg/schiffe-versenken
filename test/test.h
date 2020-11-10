@@ -73,9 +73,9 @@ void test_catchSigabort(int sig) {
 
 #define EXPECT_ASSERT(func) do { \
     if (setjmp(jumpBuffer) == 0) { \
-        __p_sig_fn_t handler = signal(SIGABRT, test_catchSigabort); \
+        signal(SIGABRT, test_catchSigabort); \
         func; \
-        signal(SIGABRT, handler); \
+        signal(SIGABRT, SIG_DFL); \
         assert(0 && "was expected to assert:" && #func); \
     } \
 } while (0) // Erwarte ein assert(), setze ein Longjump und fange SIGABRT ab
