@@ -53,7 +53,7 @@ jobs:
     
     - name: Patch MinGW on Windows with LTO support
       # https://stackoverflow.com/questions/32221221/mingw-x64-windows-plugin-needed-to-handle-lto-object
-      if: matrix.config.os == "windows-latest"
+      if: runner.os == 'Windows'
       #shell: bash
       working-directory: ${{runner.workspace}}
       run: |
