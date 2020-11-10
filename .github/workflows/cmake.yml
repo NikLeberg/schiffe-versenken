@@ -76,7 +76,7 @@ jobs:
       run: ctest -C $BUILD_TYPE --timeout 10
 
     - name: Verbosely rerun failing Tests
-      if: ${{ failure() }} && steps.test.outcome !='skipped' 
+      if: ${{ failure() }}
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # rerun previous failed tests and try to get more usefull output
