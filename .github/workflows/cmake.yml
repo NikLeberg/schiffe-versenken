@@ -50,7 +50,16 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.18
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE ${{ matrix.config.cmake_extra_args }}
-
+    
+    - name: Patch MinGW on Windows with LTO support
+      # https://stackoverflow.com/questions/32221221/mingw-x64-windows-plugin-needed-to-handle-lto-object
+      if: ${{ matrix.config.os }} == windows-latest
+      #shell: bash
+      working-directory: C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\x86_64-w64-mingw32\
+      run: ls -R
+      run: mkdir .\lib\bfd-plugins
+      run: cp .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
+      
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash
@@ -89,7 +98,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: latest-release-${{ github.sha }}
+        tag_name: prerelease-${{ github.sha }}
         release_name: CI/CD release of ${{ github.sha }}
         draft: false
         prerelease: true
