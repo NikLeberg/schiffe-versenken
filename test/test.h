@@ -33,16 +33,16 @@
     TEST_END(); \
 } while (0)
 
-#define TEST_STDOUT_MUTE()  freopen("NUL:", "w", stdout) // Standartoutput ins Nivana umlenken
+#define TEST_STDOUT_MUTE()  (void) freopen("NUL:", "w", stdout) // Standartoutput ins Nivana umlenken
 #define TEST_STDIN_PREPARE(format, ...) do { \
     FILE *input = fopen("input.txt", "w+"); \
     fprintf(input, format, __VA_ARGS__); \
     fclose(input); \
-    freopen("input.txt", "r", stdin); \
+    (void) freopen("input.txt", "r", stdin); \
 } while (0) // Standartinput vorbereiten der von zukünftigen Lesenzugriffe von stdin genutzt wird
 
 #define ASSERT_OUTPUT(func) do { \
-    freopen("output.txt", "w+", stdout); \
+    (void) freopen("output.txt", "w+", stdout); \
     func; \
     TEST_STDOUT_MUTE(); \
     FILE *output = fopen("output.txt", "r"); \
