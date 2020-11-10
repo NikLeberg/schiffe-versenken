@@ -38,6 +38,21 @@ void playground_entityGetSetIsfunctional() {
 }
 
 /**
+ * @brief Ungültiger Input für Get Set Entity soll assert() aufrufen
+ * 
+ */
+void playground_entityGetSetAssertsOnInvalid() {
+    // Get
+    EXPECT_ASSERT(playgroundGetEntity(GROUND_MAX, 0, 0));
+    EXPECT_ASSERT(playgroundGetEntity(0, SIZE_X, 0));
+    EXPECT_ASSERT(playgroundGetEntity(0, 0, SIZE_Y));
+    // Set
+    EXPECT_ASSERT(playgroundSetEntity(GROUND_MAX, 0, 0, 0));
+    EXPECT_ASSERT(playgroundSetEntity(0, SIZE_X, 0, 0));
+    EXPECT_ASSERT(playgroundSetEntity(0, 0, SIZE_Y, 0));
+}
+
+/**
  * @brief Get Set State soll das tun was es sollte
  * 
  */
@@ -53,6 +68,21 @@ void playground_stateGetSetIsFunctional() {
             playgroundSetState(ground, xy[i].x, xy[i].y, HIDDEN);
         }
     }
+}
+
+/**
+ * @brief Ungültiger Input für Get Set State soll assert() aufrufen
+ * 
+ */
+void playground_stateGetSetAssertsOnInvalid() {
+    // Get
+    EXPECT_ASSERT(playgroundGetState(GROUND_MAX, 0, 0));
+    EXPECT_ASSERT(playgroundGetState(0, SIZE_X, 0));
+    EXPECT_ASSERT(playgroundGetState(0, 0, SIZE_Y));
+    // Set
+    EXPECT_ASSERT(playgroundSetState(GROUND_MAX, 0, 0, 0));
+    EXPECT_ASSERT(playgroundSetState(0, SIZE_X, 0, 0));
+    EXPECT_ASSERT(playgroundSetState(0, 0, SIZE_Y, 0));
 }
 
 /**
@@ -225,7 +255,9 @@ int main(int argc, char *argv[]) {
     (void)argv;
 
     TEST_RUN(playground_entityGetSetIsfunctional);
+    TEST_RUN(playground_entityGetSetAssertsOnInvalid);
     TEST_RUN(playground_stateGetSetIsFunctional);
+    TEST_RUN(playground_stateGetSetAssertsOnInvalid);
     TEST_RUN(playground_translateRespectsBounds);
     TEST_RUN(playground_groundIsClearOnStart);
     TEST_RUN(playground_countOfPlacedShipsEqualToWantedShips);

@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <setjmp.h>
+#include <signal.h>
 
 
 /**
@@ -60,6 +62,23 @@
 
 #define ASSERT_BETWEEN(a, min, max)     assert(a >= min && a <= max)
 #define ASSERT_IN_DELTA(a, b, delta)    ASSERT_BETWEEN(a, b - delta, b + delta)
+
+
+static jmp_buf jumpBuffer;
+
+void test_catchSigabort(int sig) {
+    (void) sig;
+    longjmp(jumpBuffer, 0);
+}
+
+#define EXPECT_ASSERT(func) do { \
+    if (setjmp(jumpBuffer) == 0) { \
+        __p_sig_fn_t handler = signal(SIGABRT, test_catchSigabort); \
+        func; \
+        signal(SIGABRT, handler); \
+        assert(0 && "was expected to assert:" && #func); \
+    } \
+} while (0) // Erwarte ein assert(), setze ein Longjump und fange SIGABRT ab
 
 
 /**

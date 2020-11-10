@@ -98,7 +98,7 @@
         {
             "label": "test",
             "type": "shell",
-            "command": "ctest --verbose",
+            "command": "ctest --verbose --timeout 10",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },

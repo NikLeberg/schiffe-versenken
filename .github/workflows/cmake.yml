@@ -72,7 +72,14 @@ jobs:
       shell: bash
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C $BUILD_TYPE  --verbose
+      run: ctest -C $BUILD_TYPE --timeout 10
+
+    - name: Verbosely rerun failing Tests
+      if: ${{ failure() }}
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # rerun previous failed tests and try to get more usefull output
+      run: ctest -C $BUILD_TYPE --rerun-failed --verbose --timeout 10
 
     - name: Rename Artifact
       working-directory: ${{runner.workspace}}/build/src
@@ -105,6 +112,6 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          ./schiffeversenken-ubuntu/schiffeversenken-ubuntu
-          ./schiffeversenken-mac/schiffeversenken-mac
-          ./schiffeversenken-win64/schiffeversenken-win64.exe
+          ./artifact/schiffeversenken-ubuntu
+          ./artifact/schiffeversenken-mac
+          ./artifact/schiffeversenken-win64.exe
