@@ -15,6 +15,11 @@ add_executable(test_player
                ../src/player/player.c)
 add_test(player test_player)
 
+add_executable(test_computer
+               test_computer.c
+               ../src/computer/computer.c)
+add_test(computer test_computer)
+
 add_executable(test_logic
                test_logic.c
                ../src/logic/logic.c)
