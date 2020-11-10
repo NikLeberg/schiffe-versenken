@@ -56,9 +56,9 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         cd C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\
-        ls -R
+        dir .\libexec\gcc\x86_64-w64-mingw32\8.1.0
         mkdir .\lib\bfd-plugins
-        cp .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
+        copy .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
       
     - name: Build
       working-directory: ${{runner.workspace}}/build
