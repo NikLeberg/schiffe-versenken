@@ -54,10 +54,8 @@ jobs:
     - name: Patch MinGW on Windows with LTO support
       # https://stackoverflow.com/questions/32221221/mingw-x64-windows-plugin-needed-to-handle-lto-object
       if: runner.os == 'Windows'
-      #shell: bash
-      working-directory: ${{runner.workspace}}
       run: |
-        cd C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\x86_64-w64-mingw32\
+        cd C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\
         ls -R
         mkdir .\lib\bfd-plugins
         cp .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
