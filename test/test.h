@@ -11,6 +11,13 @@
  * 
  */
 
+#pragma once
+
+
+/**
+ * @brief Includes
+ * 
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -53,6 +60,7 @@
 
 #define ASSERT_BETWEEN(a, min, max)     assert(a >= min && a <= max)
 #define ASSERT_IN_DELTA(a, b, delta)    ASSERT_BETWEEN(a, b - delta, b + delta)
+
 
 /**
  * @brief Globale Typdeklarationen

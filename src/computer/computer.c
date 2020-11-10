@@ -117,7 +117,7 @@ void computer(uint8_t *x, uint8_t *y, bool lastWasHit, bool lastHitWasLast) {
             }
             step = SEARCH_DIRECTION; // Setze Schritt um eins zurück. Wenn das neue Ziel ein Treffer war,
             // dann wird mit ++step zum Beginn der Funktion wieder in diesen Schritt gesprungen. Ansonsten
-            // wird die Richtung umgekehrt.
+            // wird in Schritt "SEARCH_DIRECTION" gesprungen.
             break;
     }
 }

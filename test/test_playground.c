@@ -136,10 +136,10 @@ void playground_countOfPlacedShipsEqualToWantedShips() {
  * 
  */
 void playground_shipsDontTouch() {
-    uint8_t lastEntity;
     // Entitäten gleicher Art dürfen aneinander sein
     // unterschiedliche müssen von Wasser getrennt sein
     for (ground_t ground = 0; ground < GROUND_MAX; ++ground) {
+        uint8_t lastEntity;
         // zeilenweise
         for (uint8_t y = 0; y < SIZE_Y; ++y) {
             lastEntity = 0;

@@ -8,10 +8,10 @@
             "label": "cmake",
             "type": "shell",
             "windows": {
-                "command": "cmake -S . -B .\\build -G \"MinGW Makefiles\""
+                "command": "cmake -S . -B .\\build -G \"MinGW Makefiles\" -DCMAKE_BUILD_TYPE=Debug"
             },
             "linux": {
-                "command": "cmake -S . -B ./build"
+                "command": "cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug"
             },
             "options": {
                 "cwd": "${workspaceFolder}"
