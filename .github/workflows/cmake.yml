@@ -56,9 +56,10 @@ jobs:
       if: ${{ matrix.config.os }} == windows-latest
       #shell: bash
       working-directory: C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\x86_64-w64-mingw32\
-      run: ls -R
-      run: mkdir .\lib\bfd-plugins
-      run: cp .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
+      run: |
+        ls -R
+        mkdir .\lib\bfd-plugins
+        cp .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\lib\bfd-plugins\liblto_plugin-0.dll
       
     - name: Build
       working-directory: ${{runner.workspace}}/build
