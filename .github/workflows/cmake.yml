@@ -43,14 +43,14 @@ jobs:
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{runner.workspace}}/build
-    
-    - name: Patch MinGW on Windows with LTO support # FixMe!
+
+    - name: Patch MinGW on Windows with LTO support # FixMe !
       # https://stackoverflow.com/questions/32221221/mingw-x64-windows-plugin-needed-to-handle-lto-object
       if: runner.os == 'Windows'
       run: |
         cd C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\
         copy .\libexec\gcc\x86_64-w64-mingw32\8.1.0\liblto_plugin-0.dll .\bin\liblto_plugin-0.dll
-
+      
     - name: Configure CMake
       # Use a bash shell so we can use the same syntax for environment variable
       # access regardless of the host operating system
@@ -60,7 +60,7 @@ jobs:
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.18
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE ${{ matrix.config.cmake_extra_args }}
-      
+    
     - name: Build
       working-directory: ${{runner.workspace}}/build
       shell: bash
@@ -74,16 +74,37 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C $BUILD_TYPE  --verbose
 
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: Rename Artifact
+      working-directory: ${{runner.workspace}}/build/src
+      shell: bash
+      run: mv ${{ matrix.config.artifact }} ${{ matrix.config.asset_name }}
+
+    - name: Collect Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: ${{runner.workspace}}/build/src/${{ matrix.config.asset_name }}
+
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: Download Collected Artifacts from Build
+      uses: actions/download-artifact@v2
+
+    - name: Display structure of downloaded files
+      run: ls -R
+      
+    - name: Release
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{runner.workspace}}/build/src/${{ matrix.config.artifact }}
-        asset_name: ${{ matrix.config.asset_name }}
-        tag: ci-cd
-        overwrite: true
+        automatic_release_tag: "latest"
         prerelease: true
-        body: "All pushes to the repository will get automaticly build and tested using github action workflows.
-              The resulting binaries for Windows, Linux and MaxOS will be published here.\n
-              The sourcecode-zipfiles don't get updated, please ignore them.\n
-              Last sucessfully build push: #${{ github.sha }}."
+        title: "Development Build"
+        files: |
+          ./schiffeversenken-ubuntu/schiffeversenken-ubuntu
+          ./schiffeversenken-mac/schiffeversenken-mac
+          ./schiffeversenken-win64/schiffeversenken-win64.exe
