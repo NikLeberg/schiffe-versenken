@@ -15,15 +15,21 @@ jobs:
     strategy:
       matrix:
         config:
-        - os: ubuntu-latest,
+        - {
+          os: ubuntu-latest,
           cmake_extra_args: "",
           artifact: main
-        - os: macos-latest,
+        }
+        - {
+          os: macos-latest,
           cmake_extra_args: "",
           artifact: main
-        - os: windows-latest,
+        }
+        - {
+          os: windows-latest,
           cmake_extra_args: -G "MinGW Makefiles", # use MinGW gcc compiler
           artifact: main.exe
+        }
     
     runs-on: ${{ matrix.config.os }} # test on all three platforms
     
