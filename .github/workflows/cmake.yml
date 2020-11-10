@@ -16,17 +16,17 @@ jobs:
       matrix:
         config:
         - {
-          os: ubuntu-latest
-          cmake_command: "cmake -E make_directory ${{runner.workspace}}/build"
-        }
+            os: ubuntu-latest,
+            cmake_command: "cmake -E make_directory ${{runner.workspace}}/build"
+          }
         - {
-          os: macos-latest
-          cmake_command: "cmake -E make_directory ${{runner.workspace}}/build"
-        }
+            os: macos-latest,
+            cmake_command: "cmake -E make_directory ${{runner.workspace}}/build"
+          }
         - {
-          os: windows-latest
-          cmake_command: "cmake -E make_directory ${{runner.workspace}}/build -G \"MinGW Makefiles\""
-        }
+            os: windows-latest,
+            cmake_command: "cmake -E make_directory ${{runner.workspace}}/build -G \"MinGW Makefiles\"" # use MinGW gcc compiler
+          }
     runs-on: ${{ matrix.config.os }} # test on all three platforms
     
     steps:
