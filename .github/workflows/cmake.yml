@@ -15,18 +15,15 @@ jobs:
     strategy:
       matrix:
         config:
-        - {
-            os: ubuntu-latest,
-            cmake_command: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-          }
-        - {
-            os: macos-latest,
-            cmake_command: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-          }
-        - {
-            os: windows-latest,
-            cmake_command: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "MinGW Makefiles" # use MinGW gcc compiler
-          }
+        - os: ubuntu-latest,
+          cmake_extra_args: "",
+          artifact: main
+        - os: macos-latest,
+          cmake_extra_args: "",
+          artifact: main
+        - os: windows-latest,
+          cmake_extra_args: -G "MinGW Makefiles", # use MinGW gcc compiler
+          artifact: main.exe
     
     runs-on: ${{ matrix.config.os }} # test on all three platforms
     
@@ -46,7 +43,7 @@ jobs:
       # Note the current convention is to use the -S and -B options here to specify source
       # and build directories, but this is only available with CMake 3.13 and higher.
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.18
-      run: ${{ matrix.config.cmake_command }}
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE ${{ matrix.config.cmake_extra_args }}
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -60,3 +57,25 @@ jobs:
       # Execute tests defined by the CMake configuration.  
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C $BUILD_TYPE  --verbose
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{runner.workspace}}/build/${{ matrix.config.artifact }}
+        asset_name: ${{ matrix.config.os }}-${{ matrix.config.artifact }}
+        asset_content_type: application/octet-stream
