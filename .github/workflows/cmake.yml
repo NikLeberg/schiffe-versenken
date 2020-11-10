@@ -25,7 +25,7 @@ jobs:
           }
         - {
             os: windows-latest,
-            cmake_command: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE "MinGW Makefiles" # use MinGW gcc compiler
+            cmake_command: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -G "MinGW Makefiles" # use MinGW gcc compiler
           }
     
     runs-on: ${{ matrix.config.os }} # test on all three platforms
