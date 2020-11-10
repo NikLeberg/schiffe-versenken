@@ -64,24 +64,42 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -C $BUILD_TYPE  --verbose
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Collect Artifacts
+      uses: actions/upload-artifact@v2
       with:
-        tag_name: ${{ matrix.config.os }}-${{ github.sha }}
-        release_name: Release ${{ github.sha }}
-        draft: false
-        prerelease: false
+        name: ${{ matrix.config.os }}-${{ matrix.config.artifact }}
+        path: ${{runner.workspace}}/build/src/${{ matrix.config.artifact }}
+
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    # - name: Create Release
+    #   id: create_release
+    #   uses: actions/create-release@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     tag_name: ${{ github.sha }}
+    #     release_name: CI/CD release of ${{ github.sha }}
+    #     draft: false
+    #     prerelease: true
     
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{runner.workspace}}/build/src/${{ matrix.config.artifact }}
-        asset_name: ${{ matrix.config.os }}-${{ matrix.config.artifact }}
-        asset_content_type: application/octet-stream
+    - name: Download Collected Artifacts from Build
+      uses: actions/download-artifact@v2
+
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    # - name: Upload Collected Artifacts
+    #   id: upload-release-asset
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+    #     asset_path: ${{runner.workspace}}/build/src/${{ matrix.config.artifact }}
+    #     asset_name: ${{ matrix.config.os }}-${{ matrix.config.artifact }}
+    #     asset_content_type: application/octet-stream
