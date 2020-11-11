@@ -1,3 +1,5 @@
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+
 add_executable(test_game test_game.c)
 add_test(game test_game)
 
@@ -24,3 +26,5 @@ add_executable(test_logic
                test_logic.c
                ../src/logic/logic.c)
 add_test(logic test_logic)
+
+endif()
