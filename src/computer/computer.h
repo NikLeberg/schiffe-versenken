@@ -47,3 +47,9 @@
  * @param lastHitWasLast muss true sein wenn der vorhergehende Treffer das Schiff versenkt hat.
  */
 void computer(uint8_t *x, uint8_t *y, bool lastWasHit, bool lastHitWasLast);
+
+/**
+ * @brief Setzt den internen Status des Algorythmus zurück um nach Spielende ein weiteres Spiel starten zu können.
+ * 
+ */
+void computerReset();

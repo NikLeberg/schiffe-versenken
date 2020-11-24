@@ -32,11 +32,43 @@ typedef enum {
     DIRECTION_FOUND
 } step_t;
 
+// Zustandsspeicher für Algorythmus
+typedef struct {
+    struct { // Zustandsvariablen des Suchalgorythmus
+        step_t step;
+        uint8_t startX, startY;
+        direction_t dir;
+        bool foundOnce;
+    } computer;
+    struct {
+        uint8_t triedDirections; // speichere bereits versuchte Richtungen
+    } guessDir;
+    struct {
+        uint8_t parity; // speichere eine zufällige Parität per Spiel
+    } pseudoRandomXY;
+} algorythmState_t;
+
 
 /**
  * @brief Variablendeklarationen
  * 
  */
+
+static algorythmState_t state = { // Startzustand
+    .computer = {
+        .step = SEARCH_FOR_SHIP,
+        .startX = SIZE_X,
+        .startY = SIZE_Y,
+        .dir = DIRECTION_MAX,
+        .foundOnce = false
+    },
+    .guessDir = {
+        .triedDirections = 0
+    },
+    .pseudoRandomXY = {
+        .parity = 3
+    }
+};
 
 
 /**
@@ -71,55 +103,61 @@ static direction_t guessDir(uint8_t x, uint8_t y, bool firstGuess);
  */
 
 void computer(uint8_t *x, uint8_t *y, bool lastWasHit, bool lastHitWasLast) {
-    // Zustandsvariablen des Suchalgorythmus
-    static step_t step = SEARCH_FOR_SHIP;
-    static uint8_t startX = SIZE_X, startY = SIZE_Y;
-    static direction_t dir = DIRECTION_MAX;
-    static bool foundOnce = false;
-    if (lastWasHit) ++step; // Schrittkette bei Treffer vorwärtsschieben
-    if (lastHitWasLast) step = SEARCH_FOR_SHIP; // Schrittkette bei komplett-Abschuss neustarten
-    switch (step) {
+    if (lastWasHit) ++(state.computer.step); // Schrittkette bei Treffer vorwärtsschieben
+    if (lastHitWasLast) state.computer.step = SEARCH_FOR_SHIP; // Schrittkette bei komplett-Abschuss neustarten
+    switch (state.computer.step) {
         case (SEARCH_FOR_SHIP): // zufällige Koordinate auswählen
             pseudoRandomXY(x, y);
             break;
         case (FIRST_HIT): // erster Treffer
-            startX = *x; // Koordinaten des ersten Treffers speichern
-            startY = *y;
-            foundOnce = false;
-            dir = guessDir(*x, *y, true); // schätzen und anhand Koordinatenlage gewisse Richtungen ausschliessen
-            playgroundTranslateCoordinate(x, y, dir);
-            step = SEARCH_DIRECTION;
+            state.computer.startX = *x; // Koordinaten des ersten Treffers speichern
+            state.computer.startY = *y;
+            state.computer.foundOnce = false;
+            state.computer.dir = guessDir(*x, *y, true); // schätzen und anhand Koordinatenlage gewisse Richtungen ausschliessen
+            playgroundTranslateCoordinate(x, y, state.computer.dir);
+            state.computer.step = SEARCH_DIRECTION;
             break;
         case (SEARCH_DIRECTION): // Richtung noch nicht gefunden
-            *x = startX;
-            *y = startY;
-            if (!foundOnce) { // wenn zuvor nicht im Schritt "DIRECTION_FOUND" gewesen
-                dir = guessDir(*x, *y, false); // weitere Richtung schätzen
+            *x = state.computer.startX;
+            *y = state.computer.startY;
+            if (!state.computer.foundOnce) { // wenn zuvor nicht im Schritt "DIRECTION_FOUND" gewesen
+                state.computer.dir = guessDir(*x, *y, false); // weitere Richtung schätzen
             } else {
                 // zuvor wurde bereits im Schritt "DIRECTION_FOUND" ein Schiffsteil abgeschossen wenn wir anschliessend
                 // wieder hier landen bedeutet dies, dass das Schiff in der gegenüberliegenden Richtung weitergeht
-                dir += 2;
-                dir %= DIRECTION_MAX;
+                state.computer.dir += 2;
+                state.computer.dir %= DIRECTION_MAX;
             }
-            playgroundTranslateCoordinate(x, y, dir);
+            playgroundTranslateCoordinate(x, y, state.computer.dir);
             break;
         case (DIRECTION_FOUND): // Richtung gefunden, weitermachen
-            foundOnce = true;
-            playgroundTranslateCoordinate(x, y, dir); // Koordinate in funktionierende Richtung schieben
+            state.computer.foundOnce = true;
+            playgroundTranslateCoordinate(x, y, state.computer.dir); // Koordinate in funktionierende Richtung schieben
             // wenn nächste Koordinate bereits aufgedeckt, dann stelle Startkoordinate her
             // und suche in die andere Richtung
             if (playgroundGetState(PLAYER, *x, *y) == FOUND) {
-                *x = startX;
-                *y = startY;
-                dir += 2;
-                dir %= DIRECTION_MAX;
-                playgroundTranslateCoordinate(x, y, dir);
+                *x = state.computer.startX;
+                *y = state.computer.startY;
+                state.computer.dir += 2;
+                state.computer.dir %= DIRECTION_MAX;
+                playgroundTranslateCoordinate(x, y, state.computer.dir);
             }
-            step = SEARCH_DIRECTION; // Setze Schritt um eins zurück. Wenn das neue Ziel ein Treffer war,
+            state.computer.step = SEARCH_DIRECTION; // Setze Schritt um eins zurück. Wenn das neue Ziel ein Treffer war,
             // dann wird mit ++step zum Beginn der Funktion wieder in diesen Schritt gesprungen. Ansonsten
             // wird in Schritt "SEARCH_DIRECTION" gesprungen.
             break;
     }
+}
+
+void computerReset() {
+    // Startzustand wiederherstellen
+    state.computer.step = SEARCH_FOR_SHIP;
+    state.computer.startX = SIZE_X;
+    state.computer.startY = SIZE_Y;
+    state.computer.dir = DIRECTION_MAX;
+    state.computer.foundOnce = false;
+    state.guessDir.triedDirections = 0;
+    state.pseudoRandomXY.parity = 3;
 }
 
 
@@ -129,32 +167,33 @@ void computer(uint8_t *x, uint8_t *y, bool lastWasHit, bool lastHitWasLast) {
  */
 
 static void pseudoRandomXY(uint8_t *x, uint8_t *y) {
-    static uint8_t parity = 3; // pro Spiel einmal eine Parität / Farbe bestimmen
-    if (parity == 3) parity = rand() % 2; // 0 - jedes gerade Feld, 1 - jedes ungerade Feld
+    // pro Spiel einmal eine Parität / Farbe bestimmen
+    if (state.pseudoRandomXY.parity == 3) {
+        state.pseudoRandomXY.parity = rand() % 2; // 0 - jedes gerade Feld, 1 - jedes ungerade Feld
+    }
     bool skip = false;
     do {
         playgroundGetRandomCoordinate(x, y);
         skip = playgroundGetState(PLAYER, *x, *y) == FOUND; // überspringe bereits aufgedeckte
-        skip |= *y % 2 == (*x + parity) % 2; // nur jedes zweite Feld relevant (Schachbrettmuster)
+        skip |= *y % 2 == (*x + state.pseudoRandomXY.parity) % 2; // nur jedes zweite Feld relevant (Schachbrettmuster)
         // wird ermittelt über den Rest der Division der Koordinaten / 2, das ergibt das "Muster": 0 1 0 1 ...
         // nur wenn der Rest gleich ist (oder bei parity = 1, ungleich) ist die Koordinate "Schachbrettmusterartig".
     } while (skip);
 }
 
 static direction_t guessDir(uint8_t x, uint8_t y, bool firstGuess) {
-    static uint8_t triedDirections = 0; // speichere bereits versuchte Richtungen
     if (firstGuess) { // bei Neuanfang
-        triedDirections = 0; // Versuchte Richtungen zurücksetzen
+        state.guessDir.triedDirections = 0; // Versuchte Richtungen zurücksetzen
         // Wenn Koordinate am Rand des Feldes ist, dann kann in dieser Richtung kein Schiff sein
         if (x == 0) {
-            triedDirections |= (0x1 << LEFT);
+            state.guessDir.triedDirections |= (0x1 << LEFT);
         } else if (x == (SIZE_X - 1)) {
-            triedDirections |= (0x1 << RIGHT);
+            state.guessDir.triedDirections |= (0x1 << RIGHT);
         }
         if (y == 0) {
-            triedDirections |= (0x1 << UP);
+            state.guessDir.triedDirections |= (0x1 << UP);
         } else if (y == (SIZE_Y - 1)) {
-            triedDirections |= (0x1 << DOWN);
+            state.guessDir.triedDirections |= (0x1 << DOWN);
         }
     }
     direction_t dir;
@@ -164,7 +203,7 @@ static direction_t guessDir(uint8_t x, uint8_t y, bool firstGuess) {
         uint8_t copyY = y;
         dir = playgroundGetRandomDirection();
         // übergehe Richtung wenn:
-        if ((triedDirections >> dir) & 0x1                      // bereits probiert
+        if ((state.guessDir.triedDirections >> dir) & 0x1       // bereits probiert
         || playgroundTranslateCoordinate(&copyX, &copyY, dir)   // ungültig
         || playgroundGetState(PLAYER, copyX, copyY) == FOUND) { // zuvor bereits besucht
             skip = true;
@@ -172,6 +211,6 @@ static direction_t guessDir(uint8_t x, uint8_t y, bool firstGuess) {
             skip = false;
         }
     } while (skip);
-    triedDirections |= (0x1 << dir);
+    state.guessDir.triedDirections |= (0x1 << dir);
     return dir;
 }
