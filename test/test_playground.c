@@ -196,12 +196,12 @@ void playground_shipsDontTouch() {
  * 
  */
 void playground_randomCoordinatesInBounds() {
-    uint8_t x, y;
     uint32_t tryNum = SIZE_X * SIZE_Y;
     tryNum *= tryNum;
     bool got[SIZE_X][SIZE_Y] = {0};
     // immer im Bereich 0 - (SIZE - 1)
     for (uint32_t i = 0; i < tryNum; ++i) {
+        uint8_t x, y;
         playgroundGetRandomCoordinate(&x, &y);
         assert(x < SIZE_X);
         assert(y < SIZE_Y);
@@ -220,10 +220,10 @@ void playground_randomCoordinatesInBounds() {
  * 
  */
 void playground_randomDirectionInBounds() {
-    direction_t dir;
     uint32_t tryNum = DIRECTION_MAX * DIRECTION_MAX * 2;
     bool got[DIRECTION_MAX] = {0};
     for (uint8_t i = 0; i < tryNum; ++i) {
+        direction_t dir;
         dir = playgroundGetRandomDirection();
         assert(dir < DIRECTION_MAX);
         got[dir] = true;

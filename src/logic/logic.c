@@ -89,10 +89,14 @@ uint8_t logicComputeHit(ground_t ground, uint8_t x, uint8_t y) {
         y + 'A', x + 1,
         entity ? "33mTreffer!" : "34mFehlschuss.",
         last ? " - \033[0;31mversenkt.\033[0m" : "");
-    if (!entity) assert(!last); // nie Wasser und letzter Schuss
-    if (!entity) return 0; // nichts getroffen
-    else if (!last) return 1; // getroffen aber nicht versenkt
-    else return 2; // getroffen und versenkt
+    if (!entity) {
+        assert(!last); // nie Wasser und letzter Schuss
+        return 0; // nichts getroffen
+    } else if (!last) {
+        return 1; // getroffen aber nicht versenkt
+    } else {
+        return 2; // getroffen und versenkt
+    }
 }
 
 
