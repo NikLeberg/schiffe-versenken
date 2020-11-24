@@ -19,10 +19,6 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "presentation": {
                 "clear": true,
                 "showReuseMessage": false
@@ -111,6 +107,37 @@
             },
             "dependsOn": [
                 "build"
+            ]
+        },
+        {
+            "label": "check",
+            "type": "shell",
+            "windows": {
+                "command": "\"C:\\Program Files\\Cppcheck\\cppcheck.exe\""
+            },
+            "linux": {
+                "command": "cppcheck"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "args": [
+                "--project=compile_commands.json",
+                "--enable=all",
+                "--inconclusive",
+                "--suppress=missingIncludeSystem",
+                "--suppress=unmatchedSuppression",
+                "--error-exitcode=1"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "presentation": {
+                "clear": true,
+                "showReuseMessage": false
+            },
+            "dependsOn": [
+                "cmake"
             ]
         }
     ]

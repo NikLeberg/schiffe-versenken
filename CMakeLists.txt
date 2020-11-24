@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_definitions("-g" "-Wall" "-Wextra" "-Werror" "-pedantic")
+add_definitions("-Wall" "-Wextra" "-Werror" "-pedantic")
 
 project(Schiffeversenken)
 
