@@ -100,5 +100,8 @@ int main(int argc, char *argv[]) {
         printf("\nComputer hat gewonnen.\n");
     }
     statisticsPrint();
+    int c;
+    printf("\nSpiel zuende. Programm beenden mit [Enter].");
+    while((c = getchar()) != '\n' && c != EOF); // auf Enter warten und Input verwerfen
     return 0;
 }
