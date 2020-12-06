@@ -50,13 +50,13 @@ int main(int argc, char *argv[]) {
     // Windows versteht standartmässig keine Umlaute im Terminal, ändere dies
     system("chcp 65001 && cls"); // Codepage auf UTF-8 setzen, erlaubt ä ö und ü
 #endif
-    
+
     // Initialisiere das Spielfeld
     printf("Generiere Spielfeld des Computers, bitte warten...\n");
     playgroundInit(COMPUTER);
     printf("Generiere Spielfeld des Spielers, bitte warten...\n");
     playgroundInit(PLAYER);
-    // Bildschrm leeren und zum Home (0,0) springen
+    // Bildschrm leeren und zum Home (0,0) springen per ANSI-Escapes
     printf("\033[2J\033[H");
     printf("Ich bin bereit. Sind sie es? [Enter]\n");
     (void) getchar(); // auf Enter warten
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
             computer(&x, &y, lastTargetWasHit, lastTargetWasLast);
             lastPlayer = COMPUTER;
         }
-        // Bildschirm leeren und zum Home (0,0) springen
+        // Bildschirm leeren und zum Home (0,0) springen per ANSI-Escapes
         printf("\033[2J\033[H");
         // Ausgeben was von wem getroffen wurde (geschossen wurde auf den anderen Spieler, desshalb Negation)
         uint8_t hit = logicComputeHit(!lastPlayer, x, y);
@@ -90,7 +90,8 @@ int main(int argc, char *argv[]) {
         // Spielfeld ausgeben
         playgroundPrint(!lastPlayer, x, y);
         printf("Weiter? [Enter]");
-        (void) getchar(); // auf Enter warten
+        int c;
+        while((c = getchar()) != '\n' && c != EOF); // auf Enter warten und Input verwerfen
     }
     // Ende
     if (logicFinished(COMPUTER)) {
